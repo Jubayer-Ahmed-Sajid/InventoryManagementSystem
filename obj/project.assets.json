@@ -2266,9 +2266,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projects\\InventoryManagementSystem\\InventoryMangementSystem.csproj",
-      "projectName": "InventoryMangementSystem",
-      "projectPath": "C:\\Projects\\InventoryManagementSystem\\InventoryMangementSystem.csproj",
+      "projectUniqueName": "C:\\Projects\\InventoryManagementSystem\\InventoryManagementSystem.csproj",
+      "projectName": "InventoryManagementSystem",
+      "projectPath": "C:\\Projects\\InventoryManagementSystem\\InventoryManagementSystem.csproj",
       "packagesPath": "C:\\Users\\JAS491\\.nuget\\packages\\",
       "outputPath": "C:\\Projects\\InventoryManagementSystem\\obj\\",
       "projectStyle": "PackageReference",

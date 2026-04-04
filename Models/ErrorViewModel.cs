@@ -1,4 +1,4 @@
-namespace InventoryMangementSystem.Models;
+namespace InventoryManagementSystem.Models;
 
 public class ErrorViewModel
 {
