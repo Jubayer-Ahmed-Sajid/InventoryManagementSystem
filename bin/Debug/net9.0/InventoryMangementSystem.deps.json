@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "InventoryMangementSystem/1.0.0": {
+        "runtime": {
+          "InventoryMangementSystem.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "InventoryMangementSystem/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
