@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using InventoryManagementSystem.Models.Product;
 using InventoryManagementSystem.Models.Category;
 using InventoryManagementSystem.Models.Supplier;
-
+namespace InventoryManagementSystem.Data;
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
