@@ -1,10 +1,14 @@
 ﻿
 @model IEnumerable<InventoryManagementSystem.Models.Product.Product>
-<table class="table table-striped border-1">
+    <h2 class="my-6">Products</h2>
+    <a asp-action="Create" class="btn btn-primary my-4">Add New Product</a>
+<table class="table text-center table-striped border-1">
     <tr>
         <th>Name</th>
         <th>Price</th>
         <th>Quantity</th>
+        <th>CategoryId</th>
+        <th>SupplierId</th>
         <th>Actions</th>
         
     </tr>
@@ -15,6 +19,8 @@
                 <td>@product.Name</td>
                 <td>@product.Price</td>
                 <td>@product.Quantity</td>
+                <td>@product.CategoryId</td>
+                <td>@product.SupplierId</td>
                 <td>
                     <a asp-action="Details" class="btn btn-primary" asp-route-id="@product.Id">Details</a>
                     <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@product.Id">Edit</a>

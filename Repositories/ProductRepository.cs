@@ -2,6 +2,7 @@ using InventoryManagementSystem.Data;
 using InventoryManagementSystem.Models.Product;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace InventoryManagementSystem.Repositories;
 
 public interface IProductRepository

@@ -1,6 +1,6 @@
 using InventoryManagementSystem.Models.Category;
 using InventoryManagementSystem.Repositories;
-namespace InventoryManagementSystem.Repositories;
+namespace InventoryManagementSystem.Services;
 
 public class CategoryServices: ICategoryRepository
 {

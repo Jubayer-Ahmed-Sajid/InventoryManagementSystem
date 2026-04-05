@@ -10,6 +10,6 @@ public class Supplier
     public string Country { get; set; } = string.Empty;
     [Required,EmailAddress, StringLength(100), RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
     public string Email { get; set; } = string.Empty;
-    [StringLength(200)]
+    [Required,StringLength(200)]
     public string Address { get; set; } = string.Empty;
-}   
+}  

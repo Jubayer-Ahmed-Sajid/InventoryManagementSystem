@@ -1,7 +1,7 @@
 using InventoryManagementSystem.Models.Supplier;
 using InventoryManagementSystem.Repositories;
-namespace InventoryManagementSystem.Services;
 
+namespace InventoryManagementSystem.Services;
 public class SupplierServices: ISupplierRepository
 {
     private readonly ISupplierRepository _SupplierRepository;
