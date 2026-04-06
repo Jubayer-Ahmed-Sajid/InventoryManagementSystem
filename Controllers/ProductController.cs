@@ -83,7 +83,7 @@ public class ProductController : Controller
     {
         await _productServices.UpdateProductAsync(product);
         return RedirectToAction("Index");
-    }
+    } 
     
     public async Task<IActionResult> Details(int id)
     {
