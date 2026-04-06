@@ -62,9 +62,6 @@ public class ProductController : Controller
        
             await _productServices.AddProductAsync(product);
             return RedirectToAction("Index");
-        
-        // await PopulateDropDowns();
-        return RedirectToAction("Index", product);
     }
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
