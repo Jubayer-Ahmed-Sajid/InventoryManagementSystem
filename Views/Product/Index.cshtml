@@ -1,7 +1,6 @@
-﻿
-@model IEnumerable<InventoryManagementSystem.Models.Product.Product>
-    <h2 class="my-6">Products</h2>
-    <a asp-action="Create" class="btn btn-primary my-4">Add New Product</a>
+﻿@model IEnumerable<InventoryManagementSystem.Models.Product.Product>
+<h2 class="my-6">Products</h2>
+<a asp-action="Create" class="btn btn-primary my-4">Add New Product</a>
 <table class="table text-center table-striped border">
     <tr>
         <th>Name</th>
@@ -13,20 +12,27 @@
         
     </tr>
     
-        @foreach(var product in Model)
-        {
-            <tr>
-                <td>@product.Name</td>
-                <td>@product.Price</td>
-                <td>@product.Quantity</td>
-                <td>@product.CategoryId</td>
-                <td>@product.SupplierId</td>
-                <td>
-                    <a asp-action="Details" class="btn btn-primary" asp-route-id="@product.Id">Details</a>
-                    <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@product.Id">Edit</a>
-                    <a asp-action="Delete" class="btn btn-danger" asp-route-id="@product.Id">Delete</a>
-                </td>
-            </tr>
-        }
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>@product.Name</td>
+            <td>@product.Price</td>
+            <td>@product.Quantity</td>
+            <td>@product.CategoryId</td>
+            <td>@product.SupplierId</td>
+            <td>
+                <a asp-action="Details" class="btn btn-primary" asp-route-id="@product.Id">Details</a>
+                <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@product.Id">Edit</a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal-@product.Id">
+                    Delete
+                </button>
+
+                <partial name="Delete" model="product" />
+
+            
+            </td>
+        </tr>
+    }
     
 </table>

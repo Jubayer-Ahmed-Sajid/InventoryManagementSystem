@@ -94,7 +94,17 @@ public class ProductController : Controller
         }
         return View("Details", product);
     }
-   
+    
+    public async Task<IActionResult> Delete()
+    {
+        return View("Delete");
+    }
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _productServices.DeleteProductAsync(id);
+        return RedirectToAction("Index");
+    }
 
     public IActionResult Error()
     {
