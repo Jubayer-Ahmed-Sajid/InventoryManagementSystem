@@ -78,6 +78,12 @@ public class ProductController : Controller
         await PopulateDropDowns();
         return View("Edit", product);
     }
+    [HttpPost]
+    public async Task<IActionResult> Edit(Product product)
+    {
+        await _productServices.UpdateProductAsync(product);
+        return RedirectToAction("Index");
+    }
     
     public async Task<IActionResult> Details(int id)
     {
