@@ -78,6 +78,17 @@ public class ProductController : Controller
         await PopulateDropDowns();
         return View("Edit", product);
     }
+    
+    public async Task<IActionResult> Details(int id)
+    {
+        Product product = await _productServices.GetProductByIdAsync(id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+        return View("Details", product);
+    }
+   
 
     public IActionResult Error()
     {

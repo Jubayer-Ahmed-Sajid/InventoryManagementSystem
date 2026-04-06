@@ -1,0 +1,14 @@
+@using InventoryManagementSystem.Models.Product
+@model Product
+<h2>Product Details</h2>
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text"><strong>Price:</strong> @Model.Price</p>
+        <p class="card-text"><strong>Quantity:</strong> @Model.Quantity</p>
+        <p class="card-text"><strong>Category ID:</strong> @Model.CategoryId</p>
+        <p class="card-text"><strong>Supplier ID:</strong> @Model.SupplierId</p>
+        <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@Model.Id">Edit</a>
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    </div>
+</div>
