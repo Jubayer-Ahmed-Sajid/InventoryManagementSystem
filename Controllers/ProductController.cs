@@ -1,9 +1,5 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using InventoryManagementSystem.Models;
 using InventoryManagementSystem.Services;
-using InventoryManagementSystem.Models.Category;
-using InventoryManagementSystem.Models.Supplier;
 using InventoryManagementSystem.Models.Product;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -12,100 +8,139 @@ namespace InventoryManagementSystem.Controllers;
 
 public class ProductController : Controller
 {
-    // private readonly ILogger<ProductController> _logger;
     private readonly ProductServices _productServices;
     private readonly CategoryServices _categoryServices;
     private readonly SupplierServices _supplierServices;
 
-    public ProductController(ILogger<ProductController> logger, ProductServices productServices, CategoryServices categoryServices, SupplierServices supplierServices)
+    public ProductController(ProductServices productServices, CategoryServices categoryServices, SupplierServices supplierServices)
     {
-        // _logger = logger;
         _productServices = productServices;
         _categoryServices = categoryServices;
         _supplierServices = supplierServices;
-
     }
 
     public async Task<IActionResult> Index()
     {
         var products = await _productServices.GetAllProductsAsync();
-        return View("Index", products);
-    }
-    public async Task<IActionResult> PopulateDropDowns()
-    {
-        var AllCategories = await _categoryServices.GetAllCategoriesAsync();
-        var AllSuppliers = await _supplierServices.GetAllSuppliersAsync();
-        var Categories = AllCategories.Select(c => new SelectListItem
-        {
-            Value = c.Id.ToString(),
-            Text = c.Name
-        }).ToList();
-        var Suppliers = AllSuppliers.Select(s => new SelectListItem
-        {
-            Value = s.Id.ToString(),
-            Text = s.Name
-        }).ToList();
-        
-        ViewBag.Categories = Categories;
-        ViewBag.Suppliers = Suppliers;
-        return View("Create");
+        return View(products);
     }
 
     public async Task<IActionResult> Create()
     {
-        await PopulateDropDowns();
+        await LoadDropDownsAsync();
         return View("Create");
     }
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Product product)
     {
-       
-            await _productServices.AddProductAsync(product);
-            return RedirectToAction("Index");
+        if (!ModelState.IsValid)
+        {
+            await LoadDropDownsAsync();
+            return View(product);
+        }
+
+        await _productServices.AddProductAsync(product);
+        return RedirectToAction(nameof(Index));
     }
+
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
-
     {
-        var product = await _productServices.GetProductByIdAsync(id);
-        if (product is null)
+        Product product;
+        try
+        {
+            product = await _productServices.GetProductByIdAsync(id);
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-        await PopulateDropDowns();
+
+        await LoadDropDownsAsync();
         return View("Edit", product);
     }
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Product product)
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDropDownsAsync();
+            return View(product);
+        }
+
         await _productServices.UpdateProductAsync(product);
-        return RedirectToAction("Index");
-    } 
-    
+        return RedirectToAction(nameof(Index));
+    }
+
     public async Task<IActionResult> Details(int id)
     {
-        Product product = await _productServices.GetProductByIdAsync(id);
-        if (product is null)
+        Product product;
+        try
+        {
+            product = await _productServices.GetProductByIdAsync(id);
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
+
         return View("Details", product);
     }
-    
-    public async Task<IActionResult> Delete()
-    {
-        return View("Delete");
-    }
-    [HttpPost]
+
+    [HttpGet]
     public async Task<IActionResult> Delete(int id)
     {
+        Product product;
+        try
+        {
+            product = await _productServices.GetProductByIdAsync(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+
+        return View("Delete", product);
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
         await _productServices.DeleteProductAsync(id);
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
     public IActionResult Error()
     {
         return View();
+    }
+
+    private async Task LoadDropDownsAsync()
+    {
+        var categories = (await _categoryServices.GetAllCategoriesAsync())
+            .Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            })
+            .ToList();
+
+        var suppliers = (await _supplierServices.GetAllSuppliersAsync())
+            .Select(s => new SelectListItem
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name
+            })
+            .ToList();
+
+        ViewBag.Categories = categories;
+        ViewBag.Suppliers = suppliers;
     }
 
 }
