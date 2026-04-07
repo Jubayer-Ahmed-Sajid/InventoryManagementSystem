@@ -8,10 +8,12 @@ namespace InventoryManagementSystem.Controllers;
 public class CategoryController : Controller
 {
     private readonly CategoryServices _categoryServices;
+    private readonly ProductServices _productServices;
 
-    public CategoryController(CategoryServices categoryServices)
+    public CategoryController(CategoryServices categoryServices, ProductServices productServices)
     {
         _categoryServices = categoryServices;
+        _productServices = productServices;
     }
 
     public async Task<IActionResult> Index()
@@ -64,7 +66,10 @@ public class CategoryController : Controller
             return View(category);
         }
 
+        var existingProductsWithCategory = await _productServices.GetProductByCategoryIdAsync(category.Id);
+        
         await _categoryServices.UpdateCategoryAsync(category);
+
         return RedirectToAction(nameof(Index));
     }
 

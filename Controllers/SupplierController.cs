@@ -29,10 +29,7 @@ public class SupplierController : Controller
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> Create(Supplier supplier)
 	{
-		if (!ModelState.IsValid)
-		{
-			return View(supplier);
-		}
+		
 
 		await _supplierServices.AddSupplierAsync(supplier);
 		return RedirectToAction(nameof(Index));
@@ -58,10 +55,7 @@ public class SupplierController : Controller
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> Edit(Supplier supplier)
 	{
-		if (!ModelState.IsValid)
-		{
-			return View(supplier);
-		}
+	
 
 		await _supplierServices.UpdateSupplierAsync(supplier);
 		return RedirectToAction(nameof(Index));

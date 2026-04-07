@@ -1,0 +1,12 @@
+@using InventoryManagementSystem.Models.Category;
+@model Category
+<h2>Edit Category</h2>
+<form asp-action="Edit" method="post">
+    <div class="mb-3 form-group">
+        <label asp-for="Name" class="mb-2">Category Name:</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+   
+    <button type="submit" class="btn btn-primary">Update Category</button>
+</form>

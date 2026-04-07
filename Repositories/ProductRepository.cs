@@ -9,6 +9,8 @@ public interface IProductRepository
 {
     Task<IEnumerable<Product>> GetAllProductsAsync();
     Task<Product> GetProductByIdAsync(int id);
+    Task<IEnumerable<Product>> GetProductByCategoryIdAsync(int id);
+    Task<IEnumerable<Product>> GetProductBySupplierIdAsync(int id);
     Task AddProductAsync(Product product);
     Task UpdateProductAsync(Product product);
     Task DeleteProductAsync(int id);
@@ -32,6 +34,14 @@ public class ProductRepository : IProductRepository
     {
         return await _dbContext.Products.FindAsync(id)
             ?? throw new KeyNotFoundException($"Product with id {id} was not found.");
+    }
+    public async Task<IEnumerable<Product>> GetProductByCategoryIdAsync(int id)
+    {
+        return await _dbContext.Products.Where(p => p.CategoryId == id).ToListAsync();
+    }
+    public async Task<IEnumerable<Product>> GetProductBySupplierIdAsync(int id)
+    {
+        return await _dbContext.Products.Where(p => p.SupplierId == id).ToListAsync();
     }
 
     public async Task AddProductAsync(Product product)

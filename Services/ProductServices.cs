@@ -16,6 +16,14 @@ public class ProductServices: IProductRepository
     {
         return await _productRepository.GetProductByIdAsync(id);
     }
+    public async Task<IEnumerable<Product>> GetProductByCategoryIdAsync(int id)
+    {
+        return await _productRepository.GetProductByCategoryIdAsync(id);
+    }
+    public async Task<IEnumerable<Product>> GetProductBySupplierIdAsync(int id)
+    {
+        return await _productRepository.GetProductBySupplierIdAsync(id);
+    }
     public async Task AddProductAsync(Product product)
     {
         await _productRepository.AddProductAsync(product);
