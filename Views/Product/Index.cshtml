@@ -1,38 +1,63 @@
 ﻿@model IEnumerable<InventoryManagementSystem.Models.Product.Product>
-<h2 class="my-6">Products</h2>
-<a asp-action="Create" class="btn btn-primary my-4">Add New Product</a>
-<table class="table text-center table-striped border">
-    <tr>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>CategoryId</th>
-        <th>SupplierId</th>
-        <th>Actions</th>
-        
-    </tr>
-    
-    @foreach (var product in Model)
-    {
-        <tr>
-            <td>@product.Name</td>
-            <td>@product.Price</td>
-            <td>@product.Quantity</td>
-            <td>@product.CategoryId</td>
-            <td>@product.SupplierId</td>
-            <td>
-                <a asp-action="Details" class="btn btn-primary" asp-route-id="@product.Id">Details</a>
-                <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@product.Id">Edit</a>
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                        data-bs-target="#deleteModal-@product.Id">
-                    Delete
-                </button>
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2 class="m-0">Products</h2>
+    <a asp-action="Create" class="btn btn-primary">Add New Product</a>
+</div>
 
-                <partial name="Delete" model="product" />
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <form asp-action="Index" asp-controller="Product" method="post">
+            <label for="searchInput" class="form-label">Search Products</label>
+            <div class="input-group">
+                <input type="text" id="searchInput" name="searchString" class="form-control" placeholder="Enter product name..." value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn btn-outline-secondary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-            
-            </td>
-        </tr>
-    }
-    
-</table>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Category Id</th>
+                <th>Supplier Id</th>
+                <th style="width: 260px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model is not null && Model.Any())
+            {
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>@product.Price</td>
+                        <td>@product.Quantity</td>
+                        <td>@product.CategoryId</td>
+                        <td>@product.SupplierId</td>
+                        <td>
+                            <a asp-action="Details" class="btn btn-primary btn-sm" asp-route-id="@product.Id">Details</a>
+                            <a asp-action="Edit" class="btn btn-secondary btn-sm" asp-route-id="@product.Id">Edit</a>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal-@product.Id">
+                                Delete
+                            </button>
+
+                            <partial name="Delete" model="product" />
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-muted py-4">No products found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -16,6 +16,14 @@ public class ProductServices: IProductRepository
     {
         return await _productRepository.GetProductByIdAsync(id);
     }
+    public async Task<IEnumerable<Product>> GetProductByNameAsync(string searchString)
+    {
+        if(!string.IsNullOrWhiteSpace(searchString))
+        {
+            return await _productRepository.GetProductByNameAsync(searchString);
+        }
+        return await _productRepository.GetAllProductsAsync();
+    }
     public async Task<IEnumerable<Product>> GetProductByCategoryIdAsync(int id)
     {
         return await _productRepository.GetProductByCategoryIdAsync(id);

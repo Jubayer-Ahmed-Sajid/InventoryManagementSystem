@@ -9,6 +9,7 @@ public interface IProductRepository
 {
     Task<IEnumerable<Product>> GetAllProductsAsync();
     Task<Product> GetProductByIdAsync(int id);
+    Task<IEnumerable<Product>> GetProductByNameAsync(string name);
     Task<IEnumerable<Product>> GetProductByCategoryIdAsync(int id);
     Task<IEnumerable<Product>> GetProductBySupplierIdAsync(int id);
     Task AddProductAsync(Product product);
@@ -42,6 +43,10 @@ public class ProductRepository : IProductRepository
     public async Task<IEnumerable<Product>> GetProductBySupplierIdAsync(int id)
     {
         return await _dbContext.Products.Where(p => p.SupplierId == id).ToListAsync();
+    }
+    public async Task<IEnumerable<Product>> GetProductByNameAsync(string searchString)
+    {
+        return await _dbContext.Products.Where(p => p.Name.Contains(searchString)).ToListAsync();
     }
 
     public async Task AddProductAsync(Product product)

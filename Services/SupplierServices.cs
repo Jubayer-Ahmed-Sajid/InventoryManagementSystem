@@ -21,7 +21,7 @@ public class SupplierServices: ISupplierRepository
         var supplier = await _SupplierRepository.GetSupplierByIdAsync(id);
         return supplier;
     }
-
+ 
     public async Task AddSupplierAsync(Supplier supplier)
     {
         await _SupplierRepository.AddSupplierAsync(supplier);

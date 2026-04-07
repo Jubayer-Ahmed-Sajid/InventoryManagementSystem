@@ -24,6 +24,20 @@ public class ProductController : Controller
         var products = await _productServices.GetAllProductsAsync();
         return View(products);
     }
+    [HttpPost]
+    public async Task<IActionResult> Index(string searchString)
+    {
+            ViewData["CurrentFilter"] = searchString;
+            if (string.IsNullOrWhiteSpace(searchString))
+            {
+                return RedirectToAction("Index");
+            }
+    
+            var products = await _productServices.GetProductByNameAsync(searchString);
+            return View("Index", products);
+
+        
+    }
 
     public async Task<IActionResult> Create()
     {
