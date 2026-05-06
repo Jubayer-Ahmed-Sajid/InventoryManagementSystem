@@ -1,0 +1,56 @@
+@using InventoryManagementSystem.Models.Transaction;
+@model IEnumerable<Transaction>
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2 class="m-0">Transactions</h2>
+    <a asp-action="Create" class="btn btn-primary">Add Transaction</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th>Transaction ID</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Product ID</th>
+                <th>Quantity</th>
+                <th>From</th>
+                <th>To</th>
+                <th style="width: 220px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model is not null && Model.Any())
+            {
+                foreach (var transaction in Model)
+                {
+                    <tr>
+                        <td>@transaction.TransactionID</td>
+                        <td>@transaction.Date.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@transaction.TransactionType</td>
+                        <td>@transaction.ProductId</td>
+                        <td>@transaction.Quantity</td>
+                        <td>@transaction.LocationFromId</td>
+                        <td>@transaction.LocationToId</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@transaction.Id" class="btn btn-secondary btn-sm">Edit</a>
+                            <form asp-action="Revert" asp-route-id="@transaction.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Revert this transaction?');">
+                                    Revert
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-muted py-4">No transactions found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

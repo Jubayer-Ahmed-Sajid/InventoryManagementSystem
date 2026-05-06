@@ -1,0 +1,101 @@
+@using InventoryManagementSystem.Models.Transaction;
+@model Transaction
+@{
+    ViewData["Title"] = "Create Transaction";
+}
+<h1>Create Transaction</h1>
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="TransactionType" class="form-label">Transaction Type</label>
+        <select asp-for="TransactionType" class="form-control">
+            <option value="">-- Select Transaction Type --</option>
+            <option value="1">Stock In</option>
+            <option value="2">Stock Out</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Select Category</label>
+        <select class="form-control" asp-items="ViewBag.Categories">
+            <option value="">-- Select Category --</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ProductId" class="form-label">Select Product</label>
+        <select asp-for="ProductId" class="form-control" asp-items="ViewBag.Products">
+            <option value="">-- Select Product --</option>
+        </select>
+        <span asp-validation-for="ProductId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Quantity" class="form-label">Quantity</label>
+        <input asp-for="Quantity" class="form-control" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3" id="divLocationFrom" style="display: none;">
+        <label asp-for="LocationFromId" class="form-label">Supplier (Location From)</label>
+        <select asp-for="LocationFromId" class="form-control" asp-items="ViewBag.Suppliers">
+            <option value="">-- Select Supplier --</option>
+        </select>
+        <span asp-validation-for="LocationFromId" class="text-danger"></span>
+    </div>
+
+  
+    <div class="mb-3" id="divLocationTo" style="display: none;">
+        <label asp-for="LocationToId" class="form-label">Customer (Location To)</label>
+        <select asp-for="LocationToId" class="form-control" asp-items="ViewBag.Customers">
+            <option value="">-- Select Customer --</option>
+        </select>
+        <span asp-validation-for="LocationToId" class="text-danger"></span>
+    </div>
+
+    
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+           
+            const typeSelect = document.getElementById("TransactionType");
+            
+            const divFrom = document.getElementById("divLocationFrom");
+            const selectFrom = document.getElementById("LocationFromId");
+            
+            const divTo = document.getElementById("divLocationTo");
+            const selectTo = document.getElementById("LocationToId");
+
+            
+            function handleTypeChange() {
+                const selectedType = typeSelect.value;
+
+               
+                divFrom.style.display = "none";
+                selectFrom.disabled = true;
+                selectFrom.value = "";
+
+                divTo.style.display = "none";
+                selectTo.disabled = true;
+                selectTo.value = "";
+
+             
+                if (selectedType === "1") {
+                   
+                    divFrom.style.display = "block";
+                    selectFrom.disabled = false;
+                }
+                else if (selectedType === "2") {
+                
+                    divTo.style.display = "block";
+                    selectTo.disabled = false;
+                }
+            }
+
+           
+            typeSelect.addEventListener("change", handleTypeChange);
+
+           
+            handleTypeChange();
+        });
+    </script>
+}
