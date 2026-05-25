@@ -7,6 +7,7 @@
 <h1>Edit Transaction</h1>
 
 <form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input asp-for="Id" type="hidden" />
     <input asp-for="TransactionID" type="hidden" />
     <input asp-for="Date" type="hidden" />

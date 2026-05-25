@@ -1,4 +1,5 @@
 using InventoryManagementSystem.Data;
+using InventoryManagementSystem.Models.Location;
 using InventoryManagementSystem.Models.Product;
 using InventoryManagementSystem.Models.Transaction;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ public class TransactionServices
 
     public async Task AddTransactionAsync(Transaction transaction)
     {
-        await ValidateLocationsAsync(transaction.LocationFromId, transaction.LocationToId);
+        await NormalizeTransactionAsync(transaction);
 
         if (transaction.Quantity <= 0)
         {
@@ -73,7 +74,7 @@ public class TransactionServices
 
     public async Task UpdateTransactionAsync(Transaction transaction)
     {
-        await ValidateLocationsAsync(transaction.LocationFromId, transaction.LocationToId);
+        await NormalizeTransactionAsync(transaction);
 
         if (transaction.Quantity <= 0)
         {
@@ -135,10 +136,42 @@ public class TransactionServices
         }
     }
 
-    private async Task ValidateLocationsAsync(int locationFromId, int locationToId)
+    private async Task NormalizeTransactionAsync(Transaction transaction)
     {
-        await _locationRepository.GetLocationByIdAsync(locationFromId);
-        await _locationRepository.GetLocationByIdAsync(locationToId);
+        var warehouseId = await GetWarehouseLocationIdAsync();
+
+        switch (transaction.TransactionType)
+        {
+            case TransactionType.StockIn:
+                if (transaction.LocationFromId <= 0)
+                {
+                    throw new InvalidOperationException("Please select a supplier/location for stock in.");
+                }
+
+                transaction.LocationToId = warehouseId;
+                break;
+
+            case TransactionType.StockOut:
+                if (transaction.LocationToId <= 0)
+                {
+                    throw new InvalidOperationException("Please select a customer/location for stock out.");
+                }
+
+                transaction.LocationFromId = warehouseId;
+                break;
+
+            default:
+                throw new InvalidOperationException($"Unsupported transaction type: {transaction.TransactionType}");
+        }
+
+        await _locationRepository.GetLocationByIdAsync(transaction.LocationFromId);
+        await _locationRepository.GetLocationByIdAsync(transaction.LocationToId);
+    }
+
+    private async Task<int> GetWarehouseLocationIdAsync()
+    {
+        var warehouse = (await _locationRepository.GetLocationsByLocationTypeAsync(LocationType.warehouse)).FirstOrDefault();
+        return warehouse?.Id ?? throw new InvalidOperationException("Warehouse location is not configured.");
     }
 
     private static int GetStockDelta(Transaction transaction)

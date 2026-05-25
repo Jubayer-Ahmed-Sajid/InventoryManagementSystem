@@ -106,6 +106,12 @@ public class TransactionController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Transaction transaction)
     {
+        if (!ModelState.IsValid)
+        {
+            await LoadDropDownsAsync();
+            return View("Create", transaction);
+        }
+
         var warehouseId = await GetWarehouseLocationIdAsync();
 
         if (transaction.TransactionType == TransactionType.StockIn)
@@ -120,8 +126,17 @@ public class TransactionController : Controller
         transaction.Date = DateTime.UtcNow;
         transaction.TransactionID = $"TXN-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}";
 
-        await _transactionServices.AddTransactionAsync(transaction);
-        return RedirectToAction("Index");
+        try
+        {
+            await _transactionServices.AddTransactionAsync(transaction);
+            return RedirectToAction("Index");
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            await LoadDropDownsAsync();
+            return View("Create", transaction);
+        }
     }
 
     [HttpGet]
@@ -162,8 +177,17 @@ public class TransactionController : Controller
             transaction.LocationFromId = warehouseId;
         }
 
-        await _transactionServices.UpdateTransactionAsync(transaction);
-        return RedirectToAction(nameof(Index));
+        try
+        {
+            await _transactionServices.UpdateTransactionAsync(transaction);
+            return RedirectToAction(nameof(Index));
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            await LoadDropDownsAsync();
+            return View(transaction);
+        }
     }
 
     [HttpPost]
