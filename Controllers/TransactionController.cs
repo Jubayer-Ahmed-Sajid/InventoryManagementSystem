@@ -4,29 +4,37 @@ using InventoryManagementSystem.Models.Location;
 using InventoryManagementSystem.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using InventoryManagementSystem.Repositories;
+
 namespace InventoryManagementSystem.Controllers;
-using System.Threading.Tasks;
+
 public class TransactionController : Controller
 {
-     private readonly ProductServices _productServices;
+    private readonly ProductServices _productServices;
     private readonly CategoryServices _categoryServices;
     private readonly ILocationRepository _locationRepository;
     private readonly TransactionServices _transactionServices;
 
-    public TransactionController(ProductServices productServices, CategoryServices categoryServices, ILocationRepository locationRepository, TransactionServices transactionServices)
-    {        _productServices = productServices;
+    public TransactionController(
+        ProductServices productServices,
+        CategoryServices categoryServices,
+        ILocationRepository locationRepository,
+        TransactionServices transactionServices)
+    {
+        _productServices = productServices;
         _categoryServices = categoryServices;
         _locationRepository = locationRepository;
         _transactionServices = transactionServices;
     }
-       public async Task<IActionResult> Index()
+
+    public async Task<IActionResult> Index()
     {
         var transactions = await _transactionServices.GetAllTransactionsAsync();
         return View("Index", transactions.OrderByDescending(transaction => transaction.Date));
     }
+
     public async Task<IActionResult> Create()
     {
-         await LoadDropDownsAsync();
+        await LoadDropDownsAsync();
         return View("Create");
     }
 
@@ -39,6 +47,7 @@ public class TransactionController : Controller
                 Text = c.Name
             })
             .ToList();
+
         var products = (await _productServices.GetAllProductsAsync())
             .Select(p => new SelectListItem
             {
@@ -46,7 +55,7 @@ public class TransactionController : Controller
                 Text = p.Name
             })
             .ToList();
-        
+
         var suppliers = (await _locationRepository.GetLocationsByLocationTypeAsync(LocationType.supplier))
             .Select(l => new SelectListItem
             {
@@ -54,6 +63,7 @@ public class TransactionController : Controller
                 Text = l.Name
             })
             .ToList();
+
         var customers = (await _locationRepository.GetLocationsByLocationTypeAsync(LocationType.customer))
             .Select(l => new SelectListItem
             {
@@ -61,6 +71,7 @@ public class TransactionController : Controller
                 Text = l.Name
             })
             .ToList();
+
         var warehouses = (await _locationRepository.GetLocationsByLocationTypeAsync(LocationType.warehouse))
             .Select(l => new SelectListItem
             {
@@ -68,6 +79,7 @@ public class TransactionController : Controller
                 Text = l.Name
             })
             .ToList();
+
         var disposals = (await _locationRepository.GetLocationsByLocationTypeAsync(LocationType.disposal))
             .Select(l => new SelectListItem
             {
@@ -84,28 +96,33 @@ public class TransactionController : Controller
         ViewBag.Disposals = disposals;
     }
 
-   [HttpPost]
-public async Task<IActionResult> Create(Transaction transaction)
-{
-   
-    int myWarehouseId = 1; 
-    if (transaction.TransactionType == TransactionType.StockIn) 
+    private async Task<int> GetWarehouseLocationIdAsync()
     {
-       
-        transaction.LocationToId = myWarehouseId;
+        var warehouse = (await _locationRepository.GetLocationsByLocationTypeAsync(LocationType.warehouse)).FirstOrDefault();
+        return warehouse?.Id ?? throw new InvalidOperationException("Warehouse location is not configured.");
     }
-    else if (transaction.TransactionType == TransactionType.StockOut)
-    {
-        
-        transaction.LocationFromId = myWarehouseId;
-    }
-    transaction.Date = DateTime.UtcNow;
-    var TransactionCode = $"TXN-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString()[..5].ToUpper()}";
-    transaction.TransactionID = TransactionCode;
 
-    await _transactionServices.AddTransactionAsync(transaction);
-    return RedirectToAction("Index");
-}
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(Transaction transaction)
+    {
+        var warehouseId = await GetWarehouseLocationIdAsync();
+
+        if (transaction.TransactionType == TransactionType.StockIn)
+        {
+            transaction.LocationToId = warehouseId;
+        }
+        else if (transaction.TransactionType == TransactionType.StockOut)
+        {
+            transaction.LocationFromId = warehouseId;
+        }
+
+        transaction.Date = DateTime.UtcNow;
+        transaction.TransactionID = $"TXN-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}";
+
+        await _transactionServices.AddTransactionAsync(transaction);
+        return RedirectToAction("Index");
+    }
 
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
@@ -134,14 +151,15 @@ public async Task<IActionResult> Create(Transaction transaction)
             return View(transaction);
         }
 
-        int myWarehouseId = 1;
+        var warehouseId = await GetWarehouseLocationIdAsync();
+
         if (transaction.TransactionType == TransactionType.StockIn)
         {
-            transaction.LocationToId = myWarehouseId;
+            transaction.LocationToId = warehouseId;
         }
         else if (transaction.TransactionType == TransactionType.StockOut)
         {
-            transaction.LocationFromId = myWarehouseId;
+            transaction.LocationFromId = warehouseId;
         }
 
         await _transactionServices.UpdateTransactionAsync(transaction);
@@ -172,11 +190,10 @@ public async Task<IActionResult> Create(Transaction transaction)
             LocationFromId = transaction.LocationToId,
             LocationToId = transaction.LocationFromId,
             Date = DateTime.UtcNow,
-            TransactionID = $"REV-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString()[..5].ToUpper()}"
+            TransactionID = $"REV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}"
         };
 
         await _transactionServices.AddTransactionAsync(revertedTransaction);
         return RedirectToAction(nameof(Index));
     }
-
 }
